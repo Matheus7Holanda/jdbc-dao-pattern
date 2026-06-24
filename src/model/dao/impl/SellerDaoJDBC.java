@@ -52,7 +52,7 @@ public class SellerDaoJDBC implements SellerDao {
             }
 
             else {
-                throw new DbException("Erro insperado! Nenhuma linha foi afetada");
+                throw new DbException("Unexpected error! No rows affected");
             }
         }
         catch (SQLException e) {
@@ -92,8 +92,23 @@ public class SellerDaoJDBC implements SellerDao {
     }
 
     @Override
-    public void deleteById(Seller obj) {
+    public void deleteById(Integer id) {
+        PreparedStatement st = null;
+        try {
+            st = conn.prepareStatement(
+                    "DELETE FROM seller "
+                            + "WHERE Id = ?");
 
+            st.setInt(1, id);
+
+            st.executeUpdate();
+        }
+        catch (SQLException e) {
+            throw new DbException(e.getMessage());
+        }
+        finally {
+            DB.closeStatement(st);
+        }
     }
 
     @Override
